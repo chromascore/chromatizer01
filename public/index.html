@@ -44,46 +44,11 @@ limitations under the License.
       gtag('config', 'UA-136746036-1');
     </script>
 
-    <title>chromatizer01</title>
+    <title>chromatizer02</title>
     <script
       src="https://code.jquery.com/jquery-3.2.1.js"></script>
   </head>
   <body>
-    <div class="select">
-      <label for="audioSource">Audio source: </label><select id="audioSource"></select>
-    </div>
-    <button onclick="startRecording()">start analysis</button>
-    <button onclick="endRecording()">stop analysis</button>
-    <button onclick="toSharp()">♯Key(DoReMi)</button>
-    <button onclick="toFlat()">♭Key(DoReMi)</button>
-    <button onclick="toGermanSharp()">♯Key(German)</button>
-    <button onclick="toGermanFlat()">♭Key(German)</button>
-    <button onclick="toMono()">blackWhite</button>
-    <button onclick="toFilter0()">no filter</button>
-    <button onclick="toFilter1()">melody filter</button>
-    <button onclick="toFilter5()">chord filter</button>
-    <button onclick="adjust()">shift one note</button>
-    <hr>
-    <button onclick="toDefinite()">Absolute Pitch</button>
-    <p>Relative Pitch in:</p>
-    <button onclick="toRelativeCFlat()">C♭</button>
-    <button onclick="toRelativeGFlat()">G♭</button>
-    <button onclick="toRelativeDFlat()">D♭</button>
-    <button onclick="toRelativeAFlat()">A♭</button>
-    <button onclick="toRelativeEFlat()">E♭</button>
-    <button onclick="toRelativeBFlat()">B♭</button>
-    <button onclick="toRelativeF()">F</button>
-    <button onclick="toRelativeC()">C</button>
-    <button onclick="toRelativeG()">G</button>
-    <button onclick="toRelativeD()">D</button>
-    <button onclick="toRelativeA()">A</button>
-    <button onclick="toRelativeE()">E</button>
-    <button onclick="toRelativeB()">B</button>
-    <button onclick="toRelativeFSharp()">F♯</button>
-    <button onclick="toRelativeCSharp()">C♯</button>
-    <hr>
-    <canvas id="canvas2" width="500" height="500"></canvas>
-    <canvas id="canvas" width="500" height="500"></canvas>
     <div id="root"></div>
     <script src="./bundle.js"></script>
   </body>

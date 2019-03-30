@@ -52,23 +52,23 @@ let canvasContext2 = canvas2.getContext('2d');
 let isSharp = true;
 let isGerman = false;
 
-let toSharp = () => {
+export const toSharp = () => {
     isSharp = true;
     isMono = false;
     isGerman = false;
 }
-let toFlat = () => {
+export const toFlat = () => {
     isSharp = false;
     isMono = false;
     isGerman = false;
 }
 
-let toGermanSharp = () => {
+export const toGermanSharp = () => {
     isSharp = true;
     isGerman =true;
 }
 
-let toGermanFlat = () => {
+export const toGermanFlat = () => {
     isSharp = false;
     isGerman =true;
 }
@@ -76,7 +76,7 @@ let toGermanFlat = () => {
 // black white
 let isMono = false;
 
-let toMono = () => {
+export const toMono = () => {
     isMono = true
     isGerman = false;
 }
@@ -108,81 +108,81 @@ class keys {
 }
 */
 
-let toDefinite = () => {
+export const toDefinite = () => {
     isDefinite = true;
 }
 
-let toRelativeCFlat = () => {
+export const toRelativeCFlat = () => {
     isDefinite = false;
     isWhichRelative = -1;
 }
 
-let toRelativeGFlat = () => {
+export const toRelativeGFlat = () => {
     isDefinite = false;
     isWhichRelative = -6;
 }
 
-let toRelativeDFlat = () => {
+export const toRelativeDFlat = () => {
     isDefinite = false;
     isWhichRelative = 1;
 }
 
-let toRelativeAFlat = () => {
+export const toRelativeAFlat = () => {
     isDefinite = false;
     isWhichRelative = -4;
 }
 
-let toRelativeEFlat = () => {
+export const toRelativeEFlat = () => {
     isDefinite = false;
     isWhichRelative = 3;
 }
 
-let toRelativeBFlat = () => {
+export const toRelativeBFlat = () => {
     isDefinite = false;
     isWhichRelative = -2;
 }
 
-let toRelativeF = () => {
+export const toRelativeF = () => {
     isDefinite = false;
     isWhichRelative = 5;
 }
 
-let toRelativeC = () => {
+export const toRelativeC = () => {
     isDefinite = false;
     isWhichRelative = 0;
 }
 
-let toRelativeG = () => {
+export const toRelativeG = () => {
     isDefinite = false;
     isWhichRelative = -5;
 }
 
-let toRelativeD = () => {
+export const toRelativeD = () => {
     isDefinite = false;
     isWhichRelative = 2;
 }
 
-let toRelativeA = () => {
+export const toRelativeA = () => {
     isDefinite = false;
     isWhichRelative = -3;
 }
 
-let toRelativeE = () => {
+export const toRelativeE = () => {
     isDefinite = false;
     isWhichRelative = 4;
 }
 
-let toRelativeB = () => {
+export const toRelativeB = () => {
     isDefinite = false;
     isWhichRelative = -1;
 }
 
-let toRelativeFSharp = () => {
+export const toRelativeFSharp = () => {
     isDefinite = false;
     isWhichRelative = 6;
 }
 
-let toRelativeCSharp = () => {
+export const toRelativeCSharp = () => {
     isDefinite = false;
     isWhichRelative = 1;
 }
@@ -698,7 +698,7 @@ let analyseVoice = (e) => {
 
 
 // start analysing
-let startRecording = () => {
+export const startRecording = () => {
 
     audioContext = new AudioContext();
     
@@ -797,7 +797,7 @@ let startRecording = () => {
 }
 
 // quit recording
-let endRecording = function() {
+export const endRecording = function() {
     recordingFlg = false;
 
     // u may send audioData to the server or something
