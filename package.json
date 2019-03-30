@@ -6,5 +6,11 @@
   "repository": "https://github.com/chromascore/chromatizer01.git",
   "author": "chromascore <leviathan000000@gmail.com>",
   "license": "Apache License, Version 2.0",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "@types/react": "^16.8.10",
+    "@types/react-dom": "^16.8.3",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  }
 }
