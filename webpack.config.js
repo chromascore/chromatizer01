@@ -5,7 +5,7 @@ module.exports = (env, argv) => {
   return {
     mode: is_dev ? 'development' : 'production',
     devtool: is_dev ? 'inline-source-map' : 'none',
-    entry: './src/voice_analyse.js',
+    entry: './src/index.tsx',
     output: {
       filename: 'bundle.js',
       path: path.join(__dirname, './public'),
