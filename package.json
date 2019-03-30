@@ -1,0 +1,10 @@
+{
+  "name": "chromatizer01",
+  "version": "1.0.0",
+  "description": "audio analyzer and visualizer",
+  "main": "index.js",
+  "repository": "https://github.com/chromascore/chromatizer01.git",
+  "author": "chromascore <leviathan000000@gmail.com>",
+  "license": "Apache License, Version 2.0",
+  "private": true
+}
