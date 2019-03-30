@@ -189,7 +189,7 @@ export const toRelativeCSharp = () => {
 
 // some device needs adjustment
 let adjustment = false;
-let adjust = () => {
+export const adjust = () => {
     if (adjustment == false) {
         adjustment = true;
     } else {
@@ -200,13 +200,13 @@ let adjust = () => {
 // filter values
 let filterVal = 0;
 
-let toFilter0 = () => {
+export const toFilter0 = () => {
     filterVal = 0;
 }
-let toFilter1 = () => {
+export const toFilter1 = () => {
     filterVal = 1;
 }
-let toFilter5 = () => {
+export const toFilter5 = () => {
     filterVal = 5;
 }
 
@@ -710,14 +710,16 @@ export const startRecording = () => {
         for (var i = 0; i !== deviceInfos.length; ++i) {
           var deviceInfo = deviceInfos[i];
           var option = document.createElement('option');
-          option.value = deviceInfo.deviceId;
-          if (deviceInfo.kind === 'audioinput') {
-            option.text = deviceInfo.label ||
-              'microphone ' + (audioSelect.length + 1);
-            audioSelect.appendChild(option);
-          } else {
-            console.log('Found one other kind of source/device: ', deviceInfo);
-          }
+          audioSelect = deviceInfo.deviceId;
+          break;
+        //   option.value = deviceInfo.deviceId;
+        //   if (deviceInfo.kind === 'audioinput') {
+        //     option.text = deviceInfo.label ||
+        //       'microphone ' + (audioSelect.length + 1);
+        //     audioSelect.appendChild(option);
+        //   } else {
+        //     console.log('Found one other kind of source/device: ', deviceInfo);
+        //   }
         }
     }
 
@@ -730,7 +732,7 @@ export const startRecording = () => {
       
         var constraints = {
           audio: {
-            deviceId: {exact: audioSelect.value}
+            deviceId: {exact: audioSelect}
           }
         };
       
@@ -754,8 +756,8 @@ export const startRecording = () => {
         audioAnalyser.fftSize = 2048 * 4;
         
         /// i don't know where below is used??
-        frequencyData = new Uint8Array(audioAnalyser.frequencyBinCount);
-        timeDomainData = new Uint8Array(audioAnalyser.frequencyBinCount);
+        var frequencyData = new Uint8Array(audioAnalyser.frequencyBinCount);
+        var timeDomainData = new Uint8Array(audioAnalyser.frequencyBinCount);
         mediastreamsource.connect(audioAnalyser);
     }
 
