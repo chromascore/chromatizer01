@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<!--
+Author: https://twitter.com/chromascore
+
+This code used below: 
+    https://qiita.com/mhagita/items/6c7d73932d9a207eb94d
+    https://simpl.info/getusermedia/sources/
+
+It seems like I should set the license when
+I make something using other people's works,
+so I put this below:
+
+Copyright
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="my first web app">
+    <meta name="author" content="chromascore">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-136746036-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-136746036-1');
+    </script>
+
+    <title>chromatizer1</title>
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.js"></script>
+  </head>
+  <body>
+    <div class="select">
+      <label for="audioSource">Audio source: </label><select id="audioSource"></select>
+    </div>
+    <button onclick="startRecording()">start analysis</button>
+    <button onclick="endRecording()">stop analysis</button>
+    <button onclick="toSharp()">♯Key(DoReMi)</button>
+    <button onclick="toFlat()">♭Key(DoReMi)</button>
+    <button onclick="toGermanSharp()">♯Key(German)</button>
+    <button onclick="toGermanFlat()">♭Key(German)</button>
+    <button onclick="toMono()">blackWhite</button>
+    <button onclick="toFilter0()">no filter</button>
+    <button onclick="toFilter1()">melody filter</button>
+    <button onclick="toFilter5()">chord filter</button>
+    <button onclick="adjust()">shift one note</button>
+    <hr>
+    <button onclick="toDefinite()">Absolute Pitch</button>
+    <p>Relative Pitch in:</p>
+    <button onclick="toRelativeCFlat()">C♭</button>
+    <button onclick="toRelativeGFlat()">G♭</button>
+    <button onclick="toRelativeDFlat()">D♭</button>
+    <button onclick="toRelativeAFlat()">A♭</button>
+    <button onclick="toRelativeEFlat()">E♭</button>
+    <button onclick="toRelativeBFlat()">B♭</button>
+    <button onclick="toRelativeF()">F</button>
+    <button onclick="toRelativeC()">C</button>
+    <button onclick="toRelativeG()">G</button>
+    <button onclick="toRelativeD()">D</button>
+    <button onclick="toRelativeA()">A</button>
+    <button onclick="toRelativeE()">E</button>
+    <button onclick="toRelativeB()">B</button>
+    <button onclick="toRelativeFSharp()">F♯</button>
+    <button onclick="toRelativeCSharp()">C♯</button>
+    <hr>
+    <canvas id="canvas2" width="500" height="500"></canvas>
+    <canvas id="canvas" width="500" height="500"></canvas>
+    <script src="./voice_analyse.js"></script>
+  </body>
+</html>
