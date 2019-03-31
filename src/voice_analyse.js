@@ -112,79 +112,9 @@ export const toDefinite = () => {
     isDefinite = true;
 }
 
-export const toRelativeCFlat = () => {
+export const toRelative = (relative) => {
     isDefinite = false;
-    isWhichRelative = -1;
-}
-
-export const toRelativeGFlat = () => {
-    isDefinite = false;
-    isWhichRelative = -6;
-}
-
-export const toRelativeDFlat = () => {
-    isDefinite = false;
-    isWhichRelative = 1;
-}
-
-export const toRelativeAFlat = () => {
-    isDefinite = false;
-    isWhichRelative = -4;
-}
-
-export const toRelativeEFlat = () => {
-    isDefinite = false;
-    isWhichRelative = 3;
-}
-
-export const toRelativeBFlat = () => {
-    isDefinite = false;
-    isWhichRelative = -2;
-}
-
-export const toRelativeF = () => {
-    isDefinite = false;
-    isWhichRelative = 5;
-}
-
-export const toRelativeC = () => {
-    isDefinite = false;
-    isWhichRelative = 0;
-}
-
-export const toRelativeG = () => {
-    isDefinite = false;
-    isWhichRelative = -5;
-}
-
-export const toRelativeD = () => {
-    isDefinite = false;
-    isWhichRelative = 2;
-}
-
-export const toRelativeA = () => {
-    isDefinite = false;
-    isWhichRelative = -3;
-}
-
-export const toRelativeE = () => {
-    isDefinite = false;
-    isWhichRelative = 4;
-}
-
-export const toRelativeB = () => {
-    isDefinite = false;
-    isWhichRelative = -1;
-}
-
-export const toRelativeFSharp = () => {
-    isDefinite = false;
-    isWhichRelative = 6;
-}
-
-export const toRelativeCSharp = () => {
-    isDefinite = false;
-    isWhichRelative = 1;
+    isWhichRelative = relative;
 }
 
 // some device needs adjustment
