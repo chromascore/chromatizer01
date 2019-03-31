@@ -3,10 +3,10 @@ import React from 'react';
 //@ts-ignore
 import * as v from './voice_analyse';
 
-const App = (): JSX.Element => {
+const Buttons = (): JSX.Element => {
   return <>
     <div className="select">
-    <label htmlFor="audioSource">Audio source: </label><select id="audioSource"></select>
+      <label htmlFor="audioSource">Audio source: </label><select id="audioSource"></select>
     </div>
     <button onClick={v.startRecording}>start analysis</button>
     <button onClick={v.endRecording}>stop analysis</button>
@@ -19,7 +19,11 @@ const App = (): JSX.Element => {
     <button onClick={v.toFilter1}>melody filter</button>
     <button onClick={v.toFilter5}>chord filter</button>
     <button onClick={v.adjust}>shift one note</button>
-    <hr />
+  </>;
+};
+
+const Pitch = (): JSX.Element => {
+  return <>
     <button onClick={v.toDefinite}>Absolute Pitch</button>
     <p>Relative Pitch in:</p>
     <button onClick={v.toRelativeCFlat}>C♭</button>
@@ -37,6 +41,14 @@ const App = (): JSX.Element => {
     <button onClick={v.toRelativeB}>B</button>
     <button onClick={v.toRelativeFSharp}>F♯</button>
     <button onClick={v.toRelativeCSharp}>C♯</button>
+  </>;
+};
+
+const App = (): JSX.Element => {
+  return <>
+    <Buttons />
+    <hr />
+    <Pitch />
     <hr />
   </>;
 };
