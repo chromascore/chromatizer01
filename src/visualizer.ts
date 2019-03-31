@@ -104,7 +104,7 @@ export const visualize = (
         result.push(a *  Math.pow(2, 2/12));
 
         return result;
-    }
+    };
 
     let scale = [];
 
@@ -144,17 +144,17 @@ export const visualize = (
 
 
     // applying ralative key transpose and casing scaleVolume into soundObjs
-    if (isDefinite == false && isWhichRelative < 0) {
+    if (isDefinite === false && isWhichRelative < 0) {
         for (let i = 0; i < Math.abs(isWhichRelative); i++) {
             scaleVolume.unshift(0);
         }
-    } else if (isDefinite == false && isWhichRelative > 0) {
+    } else if (isDefinite === false && isWhichRelative > 0) {
         for (let i = 0; i < isWhichRelative; i++) {
             scaleVolume.shift();
         }
     }
 
-    if (adjustment == true) {
+    if (adjustment === true) {
         scaleVolume.unshift(0);
     }
 
@@ -164,17 +164,17 @@ export const visualize = (
     scaleVolume.forEach((each, i) => soundObjsForSort.push({volume: each, number: i}));
 
     // volume filter
-    if (filterVal != 0) {
+    if (filterVal !== 0) {
         soundObjsForSort.sort((a, b) => b.volume - a.volume);
         let loudests = soundObjsForSort.slice(0, filterVal);
         for (let i = 0; i < soundObjs.length; i++) {
             let flag = false;
             for (let j = 0; j < loudests.length; j++) {
-                if (soundObjs[i].number == loudests[j].number) {
+                if (soundObjs[i].number === loudests[j].number) {
                     flag = true;
                 }
             }
-            if (flag == false) {
+            if (flag === false) {
                 soundObjs[i].volume = soundObjs[i].volume * 0.2;
             }
         }
@@ -216,9 +216,9 @@ export const visualize = (
         // transparency
         canvasContext2.globalAlpha = sound.volume / 255;
 
-        if (isMono == false) {
+        if (isMono === false) {
         // color definite by key
-            if (isSharp == true && isGerman == false) {
+            if (isSharp === true && isGerman === false) {
                 switch (sound.number % 12) {
 
                     case 0:
@@ -258,7 +258,7 @@ export const visualize = (
                         canvasContext2.fillStyle = 'rgb(255, 255, 0)';
                         break;
                 }
-            } else if (isSharp == false && isGerman == false) {
+            } else if (isSharp === false && isGerman === false) {
                 switch (sound.number % 12) {
 
                     case 0:
@@ -298,7 +298,7 @@ export const visualize = (
                         canvasContext2.fillStyle = 'rgb(255, 255, 0)';
                         break;
                 }
-            } else if (isSharp == true && isGerman == true) {
+            } else if (isSharp === true && isGerman === true) {
                 switch (sound.number % 12) {
 
                     case 0:
@@ -338,7 +338,7 @@ export const visualize = (
                         canvasContext2.fillStyle = 'rgb(165, 251, 213)';
                         break;
                 }
-            } else if (isSharp == false && isGerman == true) {
+            } else if (isSharp === false && isGerman === true) {
                 switch (sound.number % 12) {
 
                     case 0:
@@ -386,7 +386,7 @@ export const visualize = (
         
         
         canvasContext2.fill();
-    }
+    };
 
     // I failed making below into a function lol
     drawTrapezoid(-90 * Math.PI / 180, radius, 1, soundObjs[0]);
@@ -516,4 +516,4 @@ export const visualize = (
 
     canvasContext.stroke();
 
-}
+};
