@@ -24,8 +24,36 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+interface AudioContext {
+    sampleRate: number;
+}
+
+interface AudioAnalyser {
+    fftSize: number;
+    frequencyBinCount: number;
+    getByteFrequencyData: (array: Uint8Array) => void;
+}
+
+interface SoundObj {
+    volume: number;
+    number: number;
+}
+
 // for analysing the recorded sound
-export const visualize = (audioContext, audioAnalyser, canvas, canvasContext, canvasContext2, isSharp, isMono, isGerman, isDefinite, isWhichRelative, adjustment, filterVal) => {
+export const visualize = (
+    audioContext: AudioContext,
+    audioAnalyser: AudioAnalyser,
+    canvas: HTMLCanvasElement,
+    canvasContext: CanvasRenderingContext2D,
+    canvasContext2: CanvasRenderingContext2D,
+    isSharp: boolean,
+    isMono: boolean,
+    isGerman: boolean,
+    isDefinite: boolean,
+    isWhichRelative: number,
+    adjustment: boolean,
+    filterVal: number
+): void => {
     
     let fsDivN = audioContext.sampleRate / audioAnalyser.fftSize;
     let spectrums = new Uint8Array(audioAnalyser.frequencyBinCount);
@@ -59,7 +87,7 @@ export const visualize = (audioContext, audioAnalyser, canvas, canvasContext, ca
     }
     */
 
-    let octaver = (a) => {
+    let octaver = (a: number): number[] => {
     
         let result = [];
         result.push(a *  Math.pow(2, -9/12));
@@ -130,8 +158,8 @@ export const visualize = (audioContext, audioAnalyser, canvas, canvasContext, ca
         scaleVolume.unshift(0);
     }
 
-    let soundObjs = [];
-    let soundObjsForSort = [];
+    let soundObjs: SoundObj[] = [];
+    let soundObjsForSort: SoundObj[] = [];
     scaleVolume.forEach((each, i) => soundObjs.push({volume: each, number: i}));
     scaleVolume.forEach((each, i) => soundObjsForSort.push({volume: each, number: i}));
 
@@ -176,7 +204,7 @@ export const visualize = (audioContext, audioAnalyser, canvas, canvasContext, ca
     let radius = canvas.width / 2 - 20;
 
     // draw each trapezoid
-    let drawTrapezoid = (muki, r, level, sound) => {
+    let drawTrapezoid = (muki: number, r: number, level: number, sound: SoundObj): void => {
 
         canvasContext2.beginPath();
         canvasContext2.moveTo(center.x + Math.cos(muki - 15 * Math.PI / 180) * r * level / 10, center.y + Math.sin(muki - 15 * Math.PI / 180) * r * level / 10);
