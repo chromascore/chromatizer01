@@ -10,7 +10,7 @@
     }
   },
   "rules": {
-    "@typescript-eslint/indent": "off",
+    "@typescript-eslint/indent": ["error", 4],
     "@typescript-eslint/member-delimiter-style": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
     "semi": "error",
