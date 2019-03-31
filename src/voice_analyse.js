@@ -24,7 +24,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { visualize } from './visualizer';
+import { calculateSoundObjs, visualizeWaveform, visualizeCircular } from './visualizer';
 
 // cross-browser definition
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
@@ -163,7 +163,9 @@ let onAudioProcess = (e) => {
 
 // for analysing the recorded sound
 let analyseVoice = (e) => {
-    visualize(audioContext, audioAnalyser, canvas, canvasContext, canvasContext2, isSharp, isMono, isGerman, isDefinite, isWhichRelative, adjustment, filterVal);
+    const soundObjs = calculateSoundObjs(audioContext, audioAnalyser, isDefinite, isWhichRelative, adjustment, filterVal);
+    visualizeWaveform(canvas, canvasContext, soundObjs);
+    visualizeCircular(canvas2, canvasContext2, isSharp, isMono, isGerman, soundObjs);
 }
 
 

@@ -40,28 +40,18 @@ interface SoundObj {
 }
 
 // for analysing the recorded sound
-export const visualize = (
+export const calculateSoundObjs = (
     audioContext: AudioContext,
     audioAnalyser: AudioAnalyser,
-    canvas: HTMLCanvasElement,
-    canvasContext: CanvasRenderingContext2D,
-    canvasContext2: CanvasRenderingContext2D,
-    isSharp: boolean,
-    isMono: boolean,
-    isGerman: boolean,
     isDefinite: boolean,
     isWhichRelative: number,
     adjustment: boolean,
     filterVal: number
-): void => {
+): SoundObj[] => {
     
     let fsDivN = audioContext.sampleRate / audioAnalyser.fftSize;
     let spectrums = new Uint8Array(audioAnalyser.frequencyBinCount);
     audioAnalyser.getByteFrequencyData(spectrums);
-    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
-
-    canvasContext.beginPath();
-
 
     // convert spectrum's format from Hz to 1/12 octave
 
@@ -180,9 +170,20 @@ export const visualize = (
         }
     }
 
+    return soundObjs;
+};
+
+export const visualizeWaveform = (
+    canvas: HTMLCanvasElement,
+    canvasContext: CanvasRenderingContext2D,
+    soundObjs: SoundObj[]
+): void => {
+    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+
+    canvasContext.beginPath();
 
     // display audio spectrum in 1/12octave format
-    for (let i = 0; i < scaleVolume.length; i++) {
+    for (let i = 0; i < soundObjs.length; i++) {
 
         let x = (i / soundObjs.length) * canvas.width;
         let y = (1 - (soundObjs[i].volume) / 255) * canvas.height;
@@ -194,8 +195,16 @@ export const visualize = (
     }
 
     canvasContext.stroke();
+};
 
-
+export const visualizeCircular = (
+    canvas: HTMLCanvasElement,
+    canvasContext2: CanvasRenderingContext2D,
+    isSharp: boolean,
+    isMono: boolean,
+    isGerman: boolean,
+    soundObjs: SoundObj[]
+): void => {
 
     // draw the visualization
     canvasContext2.clearRect(0, 0, canvas.width, canvas.height);
@@ -514,6 +523,6 @@ export const visualize = (
     drawTrapezoid(210 * Math.PI / 180, radius, 9, soundObjs[106]);
     drawTrapezoid(240 * Math.PI / 180, radius, 9, soundObjs[107]);
 
-    canvasContext.stroke();
+    //canvasContext.stroke();
 
 };
