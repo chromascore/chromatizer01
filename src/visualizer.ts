@@ -24,16 +24,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-interface AudioContext {
-    sampleRate: number;
-}
-
-interface AudioAnalyser {
-    fftSize: number;
-    frequencyBinCount: number;
-    getByteFrequencyData: (array: Uint8Array) => void;
-}
-
 interface SoundObj {
     volume: number;
     number: number;
@@ -42,7 +32,7 @@ interface SoundObj {
 // for analysing the recorded sound
 export const calculateSoundObjs = (
     audioContext: AudioContext,
-    audioAnalyser: AudioAnalyser,
+    audioAnalyser: AnalyserNode,
     isDefinite: boolean,
     isWhichRelative: number,
     adjustment: boolean,

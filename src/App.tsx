@@ -1,6 +1,4 @@
 import React from 'react';
-
-//@ts-ignore
 import * as v from './voice_analyse';
 
 const Buttons = (): JSX.Element => {

@@ -27,26 +27,30 @@ limitations under the License.
 import { calculateSoundObjs, visualizeWaveform, visualizeCircular } from './visualizer';
 
 // cross-browser definition
+// @ts-ignore
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+// @ts-ignore
 AudioContext = window.AudioContext // Default
+// @ts-ignore
     || window.webkitAudioContext // Safari and old versions of Chrome
     || false; 
 
 // variable definition
-let audioSelect = document.querySelector('select#audioSource');
+//let audioSelect = document.querySelector('select#audioSource');
+let audioSelect = '';
 
 let localMediaStream = null;
 let localScriptProcessor = null;
-let audioContext = null;
+let audioContext: AudioContext | null = null;
 let bufferSize = 1024;
 let audioData = []; // recorded audio data
 let recordingFlg = false;
 
 // canvas
-let canvas = document.getElementById('canvas');
+let canvas = document.getElementById('canvas') as HTMLCanvasElement;
 let canvasContext = canvas.getContext('2d');
 
-let canvas2 = document.getElementById('canvas2');
+let canvas2 = document.getElementById('canvas2') as HTMLCanvasElement;
 let canvasContext2 = canvas2.getContext('2d');
 
 // color definite by key
@@ -78,7 +82,7 @@ export const toGermanFlat = () => {
 let isMono = false;
 
 export const toMono = () => {
-    isMono = true
+    isMono = true;
     isGerman = false;
 }
 
@@ -113,7 +117,7 @@ export const toDefinite = () => {
     isDefinite = true;
 }
 
-export const toRelative = (relative) => {
+export const toRelative = (relative: number) => {
     isDefinite = false;
     isWhichRelative = relative;
 }
@@ -142,11 +146,11 @@ export const toFilter5 = () => {
 }
 
 // analysis of recorded audio
-let audioAnalyser = null;
+let audioAnalyser: AnalyserNode | null = null;
 
 
 // making a recording buffer (while recording, repeatedly called)
-let onAudioProcess = (e) => {
+let onAudioProcess = (e: AudioProcessingEvent) => {
     if (!recordingFlg) return;
 
     // making sound buffer
@@ -162,10 +166,10 @@ let onAudioProcess = (e) => {
 }
 
 // for analysing the recorded sound
-let analyseVoice = (e) => {
-    const soundObjs = calculateSoundObjs(audioContext, audioAnalyser, isDefinite, isWhichRelative, adjustment, filterVal);
-    visualizeWaveform(canvas, canvasContext, soundObjs);
-    visualizeCircular(canvas2, canvasContext2, isSharp, isMono, isGerman, soundObjs);
+let analyseVoice = () => {
+    const soundObjs = calculateSoundObjs(audioContext!, audioAnalyser!, isDefinite, isWhichRelative, adjustment, filterVal);
+    visualizeWaveform(canvas, canvasContext!, soundObjs);
+    visualizeCircular(canvas2, canvasContext2!, isSharp, isMono, isGerman, soundObjs);
 }
 
 
@@ -178,53 +182,57 @@ export const startRecording = () => {
 
     navigator.mediaDevices.enumerateDevices().then(gotDevices).then(getStream).catch(handleError);
 
-    function gotDevices(deviceInfos) {
+    function gotDevices(deviceInfos: MediaDeviceInfo[]) {
         for (var i = 0; i !== deviceInfos.length; ++i) {
-          var deviceInfo = deviceInfos[i];
-          var option = document.createElement('option');
-          audioSelect = deviceInfo.deviceId;
-          break;
-        //   option.value = deviceInfo.deviceId;
-        //   if (deviceInfo.kind === 'audioinput') {
-        //     option.text = deviceInfo.label ||
-        //       'microphone ' + (audioSelect.length + 1);
-        //     audioSelect.appendChild(option);
-        //   } else {
-        //     console.log('Found one other kind of source/device: ', deviceInfo);
-        //   }
+            var deviceInfo = deviceInfos[i];
+            audioSelect = deviceInfo.deviceId;
+            break;
+            /*
+            var option = document.createElement('option');
+            option.value = deviceInfo.deviceId;
+            if (deviceInfo.kind === 'audioinput') {
+                option.text = deviceInfo.label ||
+                'microphone ' + (audioSelect.length + 1);
+                audioSelect.appendChild(option);
+            } else {
+                console.log('Found one other kind of source/device: ', deviceInfo);
+            }
+            */
         }
     }
 
     function getStream() {
+        /*
         if (window.stream) {
-          window.stream.getTracks().forEach(function(track) {
-            track.stop();
-          });
+            window.stream.getTracks().forEach(function(track) {
+                track.stop();
+            });
         }
+        */
       
         var constraints = {
-          audio: {
-            deviceId: {exact: audioSelect}
-          }
+            audio: {
+                deviceId: {exact: audioSelect}
+            }
         };
       
         navigator.mediaDevices.getUserMedia(constraints).
-          then(gotStream).catch(handleError);
+            then(gotStream).catch(handleError);
     }
 
-    function gotStream(stream) {
+    function gotStream(stream: MediaStream) {
      
         // for recording
         localMediaStream = stream;
-        var scriptProcessor = audioContext.createScriptProcessor(bufferSize, 1, 1);
+        var scriptProcessor = audioContext!.createScriptProcessor(bufferSize, 1, 1);
         localScriptProcessor = scriptProcessor;
-        var mediastreamsource = audioContext.createMediaStreamSource(stream);
+        var mediastreamsource = audioContext!.createMediaStreamSource(stream);
         mediastreamsource.connect(scriptProcessor);
         scriptProcessor.onaudioprocess = onAudioProcess;
-        scriptProcessor.connect(audioContext.destination);
+        scriptProcessor.connect(audioContext!.destination);
 
         // for analysing the data
-        audioAnalyser = audioContext.createAnalyser();
+        audioAnalyser = audioContext!.createAnalyser();
         audioAnalyser.fftSize = 2048 * 4;
         
         /// i don't know where below is used??
@@ -233,7 +241,7 @@ export const startRecording = () => {
         mediastreamsource.connect(audioAnalyser);
     }
 
-    function handleError(error) {
+    function handleError(error: any) {
         console.log('Error: ', error);
     }
 
