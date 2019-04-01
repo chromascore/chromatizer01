@@ -1,7 +1,12 @@
 import React from 'react';
-import VoiceAnalyzer, * as v from './voice_analyse';
+import VoiceAnalyzer from './voice_analyse';
+import { WaveformVisualizer, CircularVisualizer } from './visualizer';
 
 const voiceAnalyzer = new VoiceAnalyzer();
+const waveformVisualizer = new WaveformVisualizer(document.getElementById('canvas') as HTMLCanvasElement);
+const circularVisualizer = new CircularVisualizer(document.getElementById('canvas2') as HTMLCanvasElement);
+voiceAnalyzer.addVisualizer(waveformVisualizer);
+voiceAnalyzer.addVisualizer(circularVisualizer);
 
 const Buttons = (): JSX.Element => {
     return <>
@@ -10,11 +15,11 @@ const Buttons = (): JSX.Element => {
         </div>
         <button onClick={() => voiceAnalyzer.startRecording()}>start analysis</button>
         <button onClick={() => voiceAnalyzer.endRecording()}>stop analysis</button>
-        <button onClick={v.toSharp}>♯Key(DoReMi)</button>
-        <button onClick={v.toFlat}>♭Key(DoReMi)</button>
-        <button onClick={v.toGermanSharp}>♯Key(German)</button>
-        <button onClick={v.toGermanFlat}>♭Key(German)</button>
-        <button onClick={v.toMono}>blackWhite</button>
+        <button onClick={() => circularVisualizer.toSharp()}>♯Key(DoReMi)</button>
+        <button onClick={() => circularVisualizer.toFlat()}>♭Key(DoReMi)</button>
+        <button onClick={() => circularVisualizer.toGermanSharp()}>♯Key(German)</button>
+        <button onClick={() => circularVisualizer.toGermanFlat()}>♭Key(German)</button>
+        <button onClick={() => circularVisualizer.toMono()}>blackWhite</button>
         <button onClick={() => voiceAnalyzer.toFilter0()}>no filter</button>
         <button onClick={() => voiceAnalyzer.toFilter1()}>melody filter</button>
         <button onClick={() => voiceAnalyzer.toFilter5()}>chord filter</button>
