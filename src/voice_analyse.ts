@@ -33,18 +33,7 @@ navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia 
 AudioContext = window.AudioContext // Default
 // @ts-ignore
     || window.webkitAudioContext // Safari and old versions of Chrome
-    || false; 
-
-// variable definition
-//let audioSelect = document.querySelector('select#audioSource');
-let audioSelect = '';
-
-let localMediaStream = null;
-let localScriptProcessor = null;
-let audioContext: AudioContext | null = null;
-let bufferSize = 1024;
-let audioData = []; // recorded audio data
-let recordingFlg = false;
+    || false;
 
 // canvas
 let canvas = document.getElementById('canvas') as HTMLCanvasElement;
@@ -86,107 +75,119 @@ export const toMono = () => {
     isGerman = false;
 }
 
-// relative or definite do re mi
-let isDefinite = true;
-let isWhichRelative = 0;
+class VoiceAnalyzer {
 
-/*
-class keys {
-    
-    CFlat: -1,
-    GFlat: -6,
-    DFlat: 1,
-    AFlat: -4,
-    EFlat: 3,
-    BFlat: -2,
-    F: 5,
-    
-    C: 0,
+    // variable definition
+    audioDeviceId = '';
 
-    G: -5,
-    D: 2,
-    A: -3,
-    E: 4,
-    B: -1,
-    FSharp: 6,
-    CSharp: 1
-}
-*/
+    localMediaStream: MediaStream | null = null;
+    localScriptProcessor: ScriptProcessorNode | null = null;
+    audioContext: AudioContext | null = null;
+    bufferSize = 1024;
+    audioData: Float32Array[] = []; // recorded audio data
+    recordingFlg = false;
 
-export const toDefinite = () => {
+    // relative or definite do re mi
     isDefinite = true;
-}
+    isWhichRelative = 0;
 
-export const toRelative = (relative: number) => {
-    isDefinite = false;
-    isWhichRelative = relative;
-}
+    /*
+    class keys {
 
-// some device needs adjustment
-let adjustment = false;
-export const adjust = () => {
-    if (adjustment == false) {
-        adjustment = true;
-    } else {
-        adjustment = false;
+        CFlat: -1,
+        GFlat: -6,
+        DFlat: 1,
+        AFlat: -4,
+        EFlat: 3,
+        BFlat: -2,
+        F: 5,
+
+        C: 0,
+
+        G: -5,
+        D: 2,
+        A: -3,
+        E: 4,
+        B: -1,
+        FSharp: 6,
+        CSharp: 1
     }
-}
+    */
 
-// filter values
-let filterVal = 0;
+    // some device needs adjustment
+    adjustment = false;
 
-export const toFilter0 = () => {
+    // filter values
     filterVal = 0;
-}
-export const toFilter1 = () => {
-    filterVal = 1;
-}
-export const toFilter5 = () => {
-    filterVal = 5;
-}
 
-// analysis of recorded audio
-let audioAnalyser: AnalyserNode | null = null;
+    // analysis of recorded audio
+    audioAnalyser: AnalyserNode | null = null;
 
-
-// making a recording buffer (while recording, repeatedly called)
-let onAudioProcess = (e: AudioProcessingEvent) => {
-    if (!recordingFlg) return;
-
-    // making sound buffer
-    let input = e.inputBuffer.getChannelData(0);
-    let bufferData = new Float32Array(bufferSize);
-    for (let i = 0; i < bufferSize; i++) {
-        bufferData[i] = input[i];
+    toDefinite() {
+        this.isDefinite = true;
     }
-    audioData.push(bufferData);
 
-    // analyse the sound shape
-    analyseVoice();
-}
+    toRelative(relative: number) {
+        this.isDefinite = false;
+        this.isWhichRelative = relative;
+    }
 
-// for analysing the recorded sound
-let analyseVoice = () => {
-    const soundObjs = calculateSoundObjs(audioContext!, audioAnalyser!, isDefinite, isWhichRelative, adjustment, filterVal);
-    visualizeWaveform(canvas, canvasContext!, soundObjs);
-    visualizeCircular(canvas2, canvasContext2!, isSharp, isMono, isGerman, soundObjs);
-}
+    adjust() {
+        this.adjustment = !this.adjustment;
+    }
 
+    toFilter0() {
+        this.filterVal = 0;
+    }
 
-// start analysing
-export const startRecording = () => {
+    toFilter1() {
+        this.filterVal = 1;
+    }
 
-    audioContext = new AudioContext();
-    
-    recordingFlg = true;
+    toFilter5() {
+        this.filterVal = 5;
+    }
 
-    navigator.mediaDevices.enumerateDevices().then(gotDevices).then(getStream).catch(handleError);
+    onAudioProcess(e: AudioProcessingEvent) {
+        if (!this.recordingFlg) return;
 
-    function gotDevices(deviceInfos: MediaDeviceInfo[]) {
+        // making sound buffer
+        const input = e.inputBuffer.getChannelData(0);
+        const bufferData = new Float32Array(this.bufferSize);
+        for (let i = 0; i < this.bufferSize; i++) {
+            bufferData[i] = input[i];
+        }
+        this.audioData.push(bufferData);
+
+        // analyse the sound shape
+        this.analyseVoice();
+    }
+
+    analyseVoice() {
+        const soundObjs = calculateSoundObjs(this.audioContext!, this.audioAnalyser!, this.isDefinite, this.isWhichRelative, this.adjustment, this.filterVal);
+        visualizeWaveform(canvas, canvasContext!, soundObjs);
+        visualizeCircular(canvas2, canvasContext2!, isSharp, isMono, isGerman, soundObjs);
+    }
+
+    startRecording() {
+        this.audioContext = new AudioContext();
+
+        this.recordingFlg = true;
+
+        navigator.mediaDevices
+            .enumerateDevices()
+            .then(deviceInfos => this.gotDevices(deviceInfos))
+            .then(() => this.getStream())
+            .catch((error) => this.handleError(error));
+    }
+
+    gotDevices(deviceInfos: MediaDeviceInfo[]) {
         for (var i = 0; i !== deviceInfos.length; ++i) {
             var deviceInfo = deviceInfos[i];
-            audioSelect = deviceInfo.deviceId;
-            break;
+            if (deviceInfo.kind === 'audioinput') {
+                this.audioDeviceId = deviceInfo.deviceId;
+                break;
+            }
             /*
             var option = document.createElement('option');
             option.value = deviceInfo.deviceId;
@@ -201,7 +202,7 @@ export const startRecording = () => {
         }
     }
 
-    function getStream() {
+    getStream() {
         /*
         if (window.stream) {
             window.stream.getTracks().forEach(function(track) {
@@ -209,78 +210,50 @@ export const startRecording = () => {
             });
         }
         */
-      
+
         var constraints = {
             audio: {
-                deviceId: {exact: audioSelect}
+                deviceId: { exact: this.audioDeviceId }
             }
         };
-      
-        navigator.mediaDevices.getUserMedia(constraints).
-            then(gotStream).catch(handleError);
+
+        navigator.mediaDevices
+            .getUserMedia(constraints)
+            .then(stream => this.gotStream(stream))
+            .catch(error => this.handleError(error));
     }
 
-    function gotStream(stream: MediaStream) {
-     
+    gotStream(stream: MediaStream) {
+
         // for recording
-        localMediaStream = stream;
-        var scriptProcessor = audioContext!.createScriptProcessor(bufferSize, 1, 1);
-        localScriptProcessor = scriptProcessor;
-        var mediastreamsource = audioContext!.createMediaStreamSource(stream);
+        this.localMediaStream = stream;
+        var scriptProcessor = this.audioContext!.createScriptProcessor(this.bufferSize, 1, 1);
+        this.localScriptProcessor = scriptProcessor;
+        var mediastreamsource = this.audioContext!.createMediaStreamSource(stream);
         mediastreamsource.connect(scriptProcessor);
-        scriptProcessor.onaudioprocess = onAudioProcess;
-        scriptProcessor.connect(audioContext!.destination);
+        scriptProcessor.onaudioprocess = e => this.onAudioProcess(e);
+        scriptProcessor.connect(this.audioContext!.destination);
 
         // for analysing the data
-        audioAnalyser = audioContext!.createAnalyser();
-        audioAnalyser.fftSize = 2048 * 4;
-        
+        this.audioAnalyser = this.audioContext!.createAnalyser();
+        this.audioAnalyser.fftSize = 2048 * 4;
+
         /// i don't know where below is used??
-        var frequencyData = new Uint8Array(audioAnalyser.frequencyBinCount);
-        var timeDomainData = new Uint8Array(audioAnalyser.frequencyBinCount);
-        mediastreamsource.connect(audioAnalyser);
+        var frequencyData = new Uint8Array(this.audioAnalyser.frequencyBinCount);
+        var timeDomainData = new Uint8Array(this.audioAnalyser.frequencyBinCount);
+        mediastreamsource.connect(this.audioAnalyser);
     }
 
-    function handleError(error: any) {
+    handleError(error: any) {
         console.log('Error: ', error);
     }
 
-    // below did not work for iphone
-    /*
-    audioContext = new AudioContext();
-    
-    recordingFlg = true;
-    navigator.mediaDevices.getUserMedia({audio: true}).then(
-        
-        function(stream) {
-        // for recording
-        localMediaStream = stream;
-        var scriptProcessor = audioContext.createScriptProcessor(bufferSize, 1, 1);
-        localScriptProcessor = scriptProcessor;
-        var mediastreamsource = audioContext.createMediaStreamSource(stream);
-        mediastreamsource.connect(scriptProcessor);
-        scriptProcessor.onaudioprocess = onAudioProcess;
-        scriptProcessor.connect(audioContext.destination);
+    // quit recording
+    endRecording() {
+        this.recordingFlg = false;
 
-        // for sound analysis
-        audioAnalyser = audioContext.createAnalyser();
-        audioAnalyser.fftSize = 2048 * 8;
-        ///where is below used?
-        frequencyData = new Uint8Array(audioAnalyser.frequencyBinCount);
-        timeDomainData = new Uint8Array(audioAnalyser.frequencyBinCount);
-        mediastreamsource.connect(audioAnalyser);
-        }
-    ).catch(
-        function(e) {
-            console.log(e);
-        }
-    );
-    */
+        // u may send audioData to the server or something
+    }
 }
 
-// quit recording
-export const endRecording = function() {
-    recordingFlg = false;
-
-    // u may send audioData to the server or something
-}
+export default VoiceAnalyzer;
