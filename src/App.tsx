@@ -8,7 +8,7 @@ const circularVisualizer = new CircularVisualizer(document.getElementById('canva
 voiceAnalyzer.addVisualizer(waveformVisualizer);
 voiceAnalyzer.addVisualizer(circularVisualizer);
 
-const Buttons = (): JSX.Element => {
+const Buttons = () => {
     return <>
         <div className="select">
             <label htmlFor="audioSource">Audio source: </label><select id="audioSource"></select>
@@ -27,7 +27,7 @@ const Buttons = (): JSX.Element => {
     </>;
 };
 
-const Pitch = (): JSX.Element => {
+const Pitch = () => {
     const pitch = [
         { name: 'C♭', relative: -1 },
         { name: 'G♭', relative: -6 },
@@ -55,7 +55,7 @@ const Pitch = (): JSX.Element => {
     </>;
 };
 
-const App = (): JSX.Element => {
+const App = () => {
     return <>
         <Buttons />
         <hr />

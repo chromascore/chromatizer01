@@ -170,7 +170,7 @@ class VoiceAnalyzer {
         }
         */
 
-        let octaver = (a: number): number[] => {
+        let octaver = (a: number) => {
 
             let result = [];
             result.push(a *  Math.pow(2, -9/12));
