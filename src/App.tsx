@@ -1,26 +1,33 @@
 import React from 'react';
-import * as v from './voice_analyse';
+import VoiceAnalyzer from './voice_analyse';
+import { WaveformVisualizer, CircularVisualizer } from './visualizer';
 
-const Buttons = (): JSX.Element => {
+const voiceAnalyzer = new VoiceAnalyzer();
+const waveformVisualizer = new WaveformVisualizer(document.getElementById('canvas') as HTMLCanvasElement);
+const circularVisualizer = new CircularVisualizer(document.getElementById('canvas2') as HTMLCanvasElement);
+voiceAnalyzer.addVisualizer(waveformVisualizer);
+voiceAnalyzer.addVisualizer(circularVisualizer);
+
+const Buttons = () => {
     return <>
         <div className="select">
             <label htmlFor="audioSource">Audio source: </label><select id="audioSource"></select>
         </div>
-        <button onClick={v.startRecording}>start analysis</button>
-        <button onClick={v.endRecording}>stop analysis</button>
-        <button onClick={v.toSharp}>♯Key(DoReMi)</button>
-        <button onClick={v.toFlat}>♭Key(DoReMi)</button>
-        <button onClick={v.toGermanSharp}>♯Key(German)</button>
-        <button onClick={v.toGermanFlat}>♭Key(German)</button>
-        <button onClick={v.toMono}>blackWhite</button>
-        <button onClick={v.toFilter0}>no filter</button>
-        <button onClick={v.toFilter1}>melody filter</button>
-        <button onClick={v.toFilter5}>chord filter</button>
-        <button onClick={v.adjust}>shift one note</button>
+        <button onClick={() => voiceAnalyzer.startRecording()}>start analysis</button>
+        <button onClick={() => voiceAnalyzer.endRecording()}>stop analysis</button>
+        <button onClick={() => circularVisualizer.toSharp()}>♯Key(DoReMi)</button>
+        <button onClick={() => circularVisualizer.toFlat()}>♭Key(DoReMi)</button>
+        <button onClick={() => circularVisualizer.toGermanSharp()}>♯Key(German)</button>
+        <button onClick={() => circularVisualizer.toGermanFlat()}>♭Key(German)</button>
+        <button onClick={() => circularVisualizer.toMono()}>blackWhite</button>
+        <button onClick={() => voiceAnalyzer.toFilter0()}>no filter</button>
+        <button onClick={() => voiceAnalyzer.toFilter1()}>melody filter</button>
+        <button onClick={() => voiceAnalyzer.toFilter5()}>chord filter</button>
+        <button onClick={() => voiceAnalyzer.adjust()}>shift one note</button>
     </>;
 };
 
-const Pitch = (): JSX.Element => {
+const Pitch = () => {
     const pitch = [
         { name: 'C♭', relative: -1 },
         { name: 'G♭', relative: -6 },
@@ -40,15 +47,15 @@ const Pitch = (): JSX.Element => {
     ];
 
     return <>
-        <button onClick={v.toDefinite}>Absolute Pitch</button>
+        <button onClick={() => voiceAnalyzer.toDefinite()}>Absolute Pitch</button>
         <p>Relative Pitch in:</p>
         {pitch.map(each =>
-            <button key={each.name} onClick={() => v.toRelative(each.relative)}>{each.name}</button>
+            <button key={each.name} onClick={() => voiceAnalyzer.toRelative(each.relative)}>{each.name}</button>
         )}
     </>;
 };
 
-const App = (): JSX.Element => {
+const App = () => {
     return <>
         <Buttons />
         <hr />
