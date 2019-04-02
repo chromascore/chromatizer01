@@ -24,222 +24,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
-// cross-browser definition
-navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-AudioContext = window.AudioContext // Default
-    || window.webkitAudioContext // Safari and old versions of Chrome
-    || false; 
-
-// variable definition
-let audioSelect = document.querySelector('select#audioSource');
-
-let localMediaStream = null;
-let localScriptProcessor = null;
-let audioContext = null;
-let bufferSize = 1024;
-let audioData = []; // recorded audio data
-let recordingFlg = false;
-
-// canvas
-let canvas = document.getElementById('canvas');
-let canvasContext = canvas.getContext('2d');
-
-let canvas2 = document.getElementById('canvas2');
-let canvasContext2 = canvas2.getContext('2d');
-
-// color definite by key
-let isSharp = true;
-let isGerman = false;
-
-export const toSharp = () => {
-    isSharp = true;
-    isMono = false;
-    isGerman = false;
-}
-export const toFlat = () => {
-    isSharp = false;
-    isMono = false;
-    isGerman = false;
-}
-
-export const toGermanSharp = () => {
-    isSharp = true;
-    isGerman =true;
-}
-
-export const toGermanFlat = () => {
-    isSharp = false;
-    isGerman =true;
-}
-
-// black white
-let isMono = false;
-
-export const toMono = () => {
-    isMono = true
-    isGerman = false;
-}
-
-// relative or definite do re mi
-let isDefinite = true;
-let isWhichRelative = 0;
-
-/*
-class keys {
-    
-    CFlat: -1,
-    GFlat: -6,
-    DFlat: 1,
-    AFlat: -4,
-    EFlat: 3,
-    BFlat: -2,
-    F: 5,
-    
-    C: 0,
-
-    G: -5,
-    D: 2,
-    A: -3,
-    E: 4,
-    B: -1,
-    FSharp: 6,
-    CSharp: 1
-}
-*/
-
-export const toDefinite = () => {
-    isDefinite = true;
-}
-
-export const toRelativeCFlat = () => {
-    isDefinite = false;
-    isWhichRelative = -1;
-}
-
-export const toRelativeGFlat = () => {
-    isDefinite = false;
-    isWhichRelative = -6;
-}
-
-export const toRelativeDFlat = () => {
-    isDefinite = false;
-    isWhichRelative = 1;
-}
-
-export const toRelativeAFlat = () => {
-    isDefinite = false;
-    isWhichRelative = -4;
-}
-
-export const toRelativeEFlat = () => {
-    isDefinite = false;
-    isWhichRelative = 3;
-}
-
-export const toRelativeBFlat = () => {
-    isDefinite = false;
-    isWhichRelative = -2;
-}
-
-export const toRelativeF = () => {
-    isDefinite = false;
-    isWhichRelative = 5;
-}
-
-export const toRelativeC = () => {
-    isDefinite = false;
-    isWhichRelative = 0;
-}
-
-export const toRelativeG = () => {
-    isDefinite = false;
-    isWhichRelative = -5;
-}
-
-export const toRelativeD = () => {
-    isDefinite = false;
-    isWhichRelative = 2;
-}
-
-export const toRelativeA = () => {
-    isDefinite = false;
-    isWhichRelative = -3;
-}
-
-export const toRelativeE = () => {
-    isDefinite = false;
-    isWhichRelative = 4;
-}
-
-export const toRelativeB = () => {
-    isDefinite = false;
-    isWhichRelative = -1;
-}
-
-export const toRelativeFSharp = () => {
-    isDefinite = false;
-    isWhichRelative = 6;
-}
-
-export const toRelativeCSharp = () => {
-    isDefinite = false;
-    isWhichRelative = 1;
-}
-
-// some device needs adjustment
-let adjustment = false;
-export const adjust = () => {
-    if (adjustment == false) {
-        adjustment = true;
-    } else {
-        adjustment = false;
-    }
-}
-
-// filter values
-let filterVal = 0;
-
-export const toFilter0 = () => {
-    filterVal = 0;
-}
-export const toFilter1 = () => {
-    filterVal = 1;
-}
-export const toFilter5 = () => {
-    filterVal = 5;
-}
-
-// analysis of recorded audio
-let audioAnalyser = null;
-
-
-// making a recording buffer (while recording, repeatedly called)
-let onAudioProcess = (e) => {
-    if (!recordingFlg) return;
-
-    // making sound buffer
-    let input = e.inputBuffer.getChannelData(0);
-    let bufferData = new Float32Array(bufferSize);
-    for (let i = 0; i < bufferSize; i++) {
-        bufferData[i] = input[i];
-    }
-    audioData.push(bufferData);
-
-    // analyse the sound shape
-    analyseVoice();
+interface SoundObj {
+    volume: number;
+    number: number;
 }
 
 // for analysing the recorded sound
-let analyseVoice = (e) => {
+export const calculateSoundObjs = (
+    audioContext: AudioContext,
+    audioAnalyser: AnalyserNode,
+    isDefinite: boolean,
+    isWhichRelative: number,
+    adjustment: boolean,
+    filterVal: number
+): SoundObj[] => {
     
     let fsDivN = audioContext.sampleRate / audioAnalyser.fftSize;
     let spectrums = new Uint8Array(audioAnalyser.frequencyBinCount);
     audioAnalyser.getByteFrequencyData(spectrums);
-    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
-
-    canvasContext.beginPath();
-
 
     // convert spectrum's format from Hz to 1/12 octave
 
@@ -265,7 +67,7 @@ let analyseVoice = (e) => {
     }
     */
 
-    let octaver = (a) => {
+    let octaver = (a: number): number[] => {
     
         let result = [];
         result.push(a *  Math.pow(2, -9/12));
@@ -282,7 +84,7 @@ let analyseVoice = (e) => {
         result.push(a *  Math.pow(2, 2/12));
 
         return result;
-    }
+    };
 
     let scale = [];
 
@@ -322,45 +124,56 @@ let analyseVoice = (e) => {
 
 
     // applying ralative key transpose and casing scaleVolume into soundObjs
-    if (isDefinite == false && isWhichRelative < 0) {
+    if (isDefinite === false && isWhichRelative < 0) {
         for (let i = 0; i < Math.abs(isWhichRelative); i++) {
             scaleVolume.unshift(0);
         }
-    } else if (isDefinite == false && isWhichRelative > 0) {
+    } else if (isDefinite === false && isWhichRelative > 0) {
         for (let i = 0; i < isWhichRelative; i++) {
             scaleVolume.shift();
         }
     }
 
-    if (adjustment == true) {
+    if (adjustment === true) {
         scaleVolume.unshift(0);
     }
 
-    let soundObjs = [];
-    let soundObjsForSort = [];
+    let soundObjs: SoundObj[] = [];
+    let soundObjsForSort: SoundObj[] = [];
     scaleVolume.forEach((each, i) => soundObjs.push({volume: each, number: i}));
     scaleVolume.forEach((each, i) => soundObjsForSort.push({volume: each, number: i}));
 
     // volume filter
-    if (filterVal != 0) {
+    if (filterVal !== 0) {
         soundObjsForSort.sort((a, b) => b.volume - a.volume);
         let loudests = soundObjsForSort.slice(0, filterVal);
         for (let i = 0; i < soundObjs.length; i++) {
             let flag = false;
             for (let j = 0; j < loudests.length; j++) {
-                if (soundObjs[i].number == loudests[j].number) {
+                if (soundObjs[i].number === loudests[j].number) {
                     flag = true;
                 }
             }
-            if (flag == false) {
+            if (flag === false) {
                 soundObjs[i].volume = soundObjs[i].volume * 0.2;
             }
         }
     }
 
+    return soundObjs;
+};
+
+export const visualizeWaveform = (
+    canvas: HTMLCanvasElement,
+    canvasContext: CanvasRenderingContext2D,
+    soundObjs: SoundObj[]
+): void => {
+    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+
+    canvasContext.beginPath();
 
     // display audio spectrum in 1/12octave format
-    for (let i = 0; i < scaleVolume.length; i++) {
+    for (let i = 0; i < soundObjs.length; i++) {
 
         let x = (i / soundObjs.length) * canvas.width;
         let y = (1 - (soundObjs[i].volume) / 255) * canvas.height;
@@ -372,8 +185,16 @@ let analyseVoice = (e) => {
     }
 
     canvasContext.stroke();
+};
 
-
+export const visualizeCircular = (
+    canvas: HTMLCanvasElement,
+    canvasContext2: CanvasRenderingContext2D,
+    isSharp: boolean,
+    isMono: boolean,
+    isGerman: boolean,
+    soundObjs: SoundObj[]
+): void => {
 
     // draw the visualization
     canvasContext2.clearRect(0, 0, canvas.width, canvas.height);
@@ -382,7 +203,7 @@ let analyseVoice = (e) => {
     let radius = canvas.width / 2 - 20;
 
     // draw each trapezoid
-    let drawTrapezoid = (muki, r, level, sound) => {
+    let drawTrapezoid = (muki: number, r: number, level: number, sound: SoundObj): void => {
 
         canvasContext2.beginPath();
         canvasContext2.moveTo(center.x + Math.cos(muki - 15 * Math.PI / 180) * r * level / 10, center.y + Math.sin(muki - 15 * Math.PI / 180) * r * level / 10);
@@ -394,9 +215,9 @@ let analyseVoice = (e) => {
         // transparency
         canvasContext2.globalAlpha = sound.volume / 255;
 
-        if (isMono == false) {
+        if (isMono === false) {
         // color definite by key
-            if (isSharp == true && isGerman == false) {
+            if (isSharp === true && isGerman === false) {
                 switch (sound.number % 12) {
 
                     case 0:
@@ -436,7 +257,7 @@ let analyseVoice = (e) => {
                         canvasContext2.fillStyle = 'rgb(255, 255, 0)';
                         break;
                 }
-            } else if (isSharp == false && isGerman == false) {
+            } else if (isSharp === false && isGerman === false) {
                 switch (sound.number % 12) {
 
                     case 0:
@@ -476,7 +297,7 @@ let analyseVoice = (e) => {
                         canvasContext2.fillStyle = 'rgb(255, 255, 0)';
                         break;
                 }
-            } else if (isSharp == true && isGerman == true) {
+            } else if (isSharp === true && isGerman === true) {
                 switch (sound.number % 12) {
 
                     case 0:
@@ -516,7 +337,7 @@ let analyseVoice = (e) => {
                         canvasContext2.fillStyle = 'rgb(165, 251, 213)';
                         break;
                 }
-            } else if (isSharp == false && isGerman == true) {
+            } else if (isSharp === false && isGerman === true) {
                 switch (sound.number % 12) {
 
                     case 0:
@@ -564,7 +385,7 @@ let analyseVoice = (e) => {
         
         
         canvasContext2.fill();
-    }
+    };
 
     // I failed making below into a function lol
     drawTrapezoid(-90 * Math.PI / 180, radius, 1, soundObjs[0]);
@@ -692,115 +513,6 @@ let analyseVoice = (e) => {
     drawTrapezoid(210 * Math.PI / 180, radius, 9, soundObjs[106]);
     drawTrapezoid(240 * Math.PI / 180, radius, 9, soundObjs[107]);
 
-    canvasContext.stroke();
+    //canvasContext.stroke();
 
-}
-
-
-// start analysing
-export const startRecording = () => {
-
-    audioContext = new AudioContext();
-    
-    recordingFlg = true;
-
-    navigator.mediaDevices.enumerateDevices().then(gotDevices).then(getStream).catch(handleError);
-
-    function gotDevices(deviceInfos) {
-        for (var i = 0; i !== deviceInfos.length; ++i) {
-          var deviceInfo = deviceInfos[i];
-          var option = document.createElement('option');
-          audioSelect = deviceInfo.deviceId;
-          break;
-        //   option.value = deviceInfo.deviceId;
-        //   if (deviceInfo.kind === 'audioinput') {
-        //     option.text = deviceInfo.label ||
-        //       'microphone ' + (audioSelect.length + 1);
-        //     audioSelect.appendChild(option);
-        //   } else {
-        //     console.log('Found one other kind of source/device: ', deviceInfo);
-        //   }
-        }
-    }
-
-    function getStream() {
-        if (window.stream) {
-          window.stream.getTracks().forEach(function(track) {
-            track.stop();
-          });
-        }
-      
-        var constraints = {
-          audio: {
-            deviceId: {exact: audioSelect}
-          }
-        };
-      
-        navigator.mediaDevices.getUserMedia(constraints).
-          then(gotStream).catch(handleError);
-    }
-
-    function gotStream(stream) {
-     
-        // for recording
-        localMediaStream = stream;
-        var scriptProcessor = audioContext.createScriptProcessor(bufferSize, 1, 1);
-        localScriptProcessor = scriptProcessor;
-        var mediastreamsource = audioContext.createMediaStreamSource(stream);
-        mediastreamsource.connect(scriptProcessor);
-        scriptProcessor.onaudioprocess = onAudioProcess;
-        scriptProcessor.connect(audioContext.destination);
-
-        // for analysing the data
-        audioAnalyser = audioContext.createAnalyser();
-        audioAnalyser.fftSize = 2048 * 4;
-        
-        /// i don't know where below is used??
-        var frequencyData = new Uint8Array(audioAnalyser.frequencyBinCount);
-        var timeDomainData = new Uint8Array(audioAnalyser.frequencyBinCount);
-        mediastreamsource.connect(audioAnalyser);
-    }
-
-    function handleError(error) {
-        console.log('Error: ', error);
-    }
-
-    // below did not work for iphone
-    /*
-    audioContext = new AudioContext();
-    
-    recordingFlg = true;
-    navigator.mediaDevices.getUserMedia({audio: true}).then(
-        
-        function(stream) {
-        // for recording
-        localMediaStream = stream;
-        var scriptProcessor = audioContext.createScriptProcessor(bufferSize, 1, 1);
-        localScriptProcessor = scriptProcessor;
-        var mediastreamsource = audioContext.createMediaStreamSource(stream);
-        mediastreamsource.connect(scriptProcessor);
-        scriptProcessor.onaudioprocess = onAudioProcess;
-        scriptProcessor.connect(audioContext.destination);
-
-        // for sound analysis
-        audioAnalyser = audioContext.createAnalyser();
-        audioAnalyser.fftSize = 2048 * 8;
-        ///where is below used?
-        frequencyData = new Uint8Array(audioAnalyser.frequencyBinCount);
-        timeDomainData = new Uint8Array(audioAnalyser.frequencyBinCount);
-        mediastreamsource.connect(audioAnalyser);
-        }
-    ).catch(
-        function(e) {
-            console.log(e);
-        }
-    );
-    */
-}
-
-// quit recording
-export const endRecording = function() {
-    recordingFlg = false;
-
-    // u may send audioData to the server or something
-}
+};
